@@ -1,10 +1,11 @@
 "use strict";
 
 const express = require('express');
+// const Sequelize = require("sequelize");
 const { validationResult } = require('express-validator');
 const bcryptjs = require("bcryptjs");
 const auth = require("basic-auth");
-const User = require("../db/models").User;
+// const User = require("../db/models/index");
 
 const authenticateUser = (req, res, next) => {
     let message = null;

@@ -1,10 +1,11 @@
 "use strict";
 
 const express = require('express');
-const authenticateUser = require('../middleware/authenticateUser');
+// const Sequelize = require("sequelize");
+const authenticateUser = require('./middleware/authenticateUser');
 const { check } = require("express-validator");
 const router = express.Router();
-const Course = require("../db/models").Course;
+const { Course, User } = require("../db/models");
 
 
 //Async handler for each route to run try/catch
@@ -62,13 +63,13 @@ router.get("/courses/:id", asyncHandler( async(req, res) => {
 Creates a course, sets the Location header to the URI for the course, and returns no content */
 router.post("/courses",[
     check("title")
-      .exists()
+      .exists({ checkNull: true, checkFalsy: true })
       .withMessage('Please create a "title" for the course'),
     check("description")
-      .exists()
+      .exists({ checkNull: true, checkFalsy: true })
       .withMessage('Please add a "description" for the course'),
     check("estimatedTime")
-      .exists()
+      .exists({ checkNull: true, checkFalsy: true })
       .withMessage('Please add an approx. "time" estimate for scheduling the course'),
     ], 
     authenticateUser, asyncHandler( async(req, res) => {
@@ -106,13 +107,13 @@ router.post("/courses",[
 /* PUT "/api/courses/:id" (204): Updates a course and returns no content */
 router.put("/courses/:id",[
     check("title")
-      .exists()
+      .exists({ checkNull: true, checkFalsy: true })
       .withMessage('Course requires a "title"'),
     check("description")
-      .exists()
+      .exists({ checkNull: true, checkFalsy: true })
       .withMessage('Course requires "description"'),
     check("estimatedTime")
-      .exists()
+      .exists({ checkNull: true, checkFalsy: true })
       .withMessage('"Rime" estimate needed for scheduling purposes'),
     ], authenticateUser, asyncHandler( async(req, res) => {
 
@@ -123,25 +124,7 @@ router.put("/courses/:id",[
                 let course = Course.findByPk(req.params.id);
                 course.update(req.body);
                 res.status(204).end();
-            }
-
-    // let course;
-    // try{
-    //     course = Course.findByPk(req.params.id);
-    //     course.update(req.body);
-    //     res.status(204).end();
-    // } catch(error){
-    //     if(error.name === "SequelizeValidationError"){
-    //         course = await Course.update(req.body);
-    //             //details each SequelizeValidationError:
-    //             const errors = error.errors.map(err => err.message);
-    //             console.error("Validation Error(s): ", errors);
-    //             res.status(400).end();
-    //     } else {
-    //         throw error; //async to catch
-    //     }
-    // }
-    
+            }    
 }));
 /* DELETE "/api/courses/:id" (204): Deletes a course and returns no content */
 router.delete("/courses/:id", authenticateUser, asyncHandler( async(req, res) => {
