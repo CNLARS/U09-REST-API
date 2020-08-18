@@ -1,9 +1,9 @@
 "use strict";
 
 const express = require('express');
-// const Sequelize = require("sequelize");
 const authenticateUser = require('./middleware/authenticateUser');
-const { check } = require("express-validator");
+const { check, validationResult } = require("express-validator");
+const bcryptjs = require("bcryptjs");
 const router = express.Router();
 const User = require("../db/models").User;
 
@@ -24,13 +24,14 @@ const users = []; //Array to contain collection of user data
 /* USER ROUTES */
 
 //GET "/api/users", (200): Returns the currently authenticated user
-router.get("/users", authenticateUser, (req, res) => {
-    const user = User.findByPk(req.currentUser.id); //req.currentUser; 
-        res.json({
-            name: `${user.firstName} ${user.lastName}`,
-            username: user.emailAddress,
-        });
-});
+router.get("/users", authenticateUser, asyncHandler( (req, res) => {
+    const user = User.findByPk(req.currentUser.id); //req.currentUser;
+        if(user){
+            res.status(200).json(user);
+            } else {
+                res.status(400).end();
+            }
+}));
 
 /* POST "/api/users", (201):
 Creates a user, sets the Location header to "/", and returns no content */
@@ -61,7 +62,7 @@ router.post("/users",[
                 // Hash password and add new user:
                     user.password = bcryptjs.hashSync(user.password);
                     users.push(user);
-                    res.status(201).end();
+                    res.status(201).location("/").end(); //updates location and status code
         }
 }));
 

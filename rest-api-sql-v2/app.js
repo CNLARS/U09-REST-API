@@ -13,12 +13,10 @@ const enableGlobalErrorLogging = process.env.ENABLE_GLOBAL_ERROR_LOGGING === 'tr
 // create the Express app
 const app = express();
 
+// setup JSON parsing:
+app.use(express.json());
 // setup morgan which gives us http request logging
 app.use(morgan('dev'));
-
-// setup for api routes
-app.use('/api', courses);
-app.use('/api', users);
 
 // setup a friendly greeting for the root route
 app.get('/', (req, res) => {
@@ -26,6 +24,10 @@ app.get('/', (req, res) => {
     message: 'Welcome to the REST API project!',
   });
 });
+
+// setup for api routes
+app.use('/api', courses);
+app.use('/api', users);
 
 // send 404 if no other route matched
 app.use((req, res) => {
@@ -42,7 +44,8 @@ app.use((err, req, res, next) => {
 
   res.status(err.status || 500).json({
     message: err.message,
-    error: {},
+    error: {}
+    // error: process.env.NODE_ENV === 'production' ? {} : err,
   });
 });
 

@@ -1,12 +1,10 @@
 "use strict";
 
 const express = require('express');
-// const Sequelize = require("sequelize");
-const authenticateUser = require('./middleware/authenticateUser');
-const { check } = require("express-validator");
 const router = express.Router();
 const { Course, User } = require("../db/models");
-
+const authenticateUser = require('./middleware/authenticateUser');
+const { check, validationResult } = require("express-validator");
 
 //Async handler for each route to run try/catch
 function asyncHandler(cb){
@@ -23,8 +21,7 @@ function asyncHandler(cb){
 
 /* GET "/api/courses", (200): 
 Returns list of courses (including the user by association) */
-
-//Study Reference: https://gist.github.com/zcaceres/83b554ee08726a734088d90d455bc566
+    //Study Reference: https://gist.github.com/zcaceres/83b554ee08726a734088d90d455bc566
 router.get("/courses", asyncHandler( async(req, res) => {
     const courses = await Course.findAll({
        include: [{
@@ -43,7 +40,6 @@ router.get("/courses", asyncHandler( async(req, res) => {
 
 /* GET "/api/courses/:id", (200): 
 Returns course (including the user that owns the course) for the provided course ID */
-
 router.get("/courses/:id", asyncHandler( async(req, res) => {
     const course = await Course.findByPk(req.params.id, {
         include: [{
@@ -101,11 +97,12 @@ router.put("/courses/:id",[
             const errorMessages = errors.array().map(error => error.msg);
             return res.status(400).json({errors: errorMessages});
             } else {
-                let course = Course.findByPk(req.params.id);
+                let course = await Course.findByPk(req.params.id);
                 course.update(req.body);
                 res.status(204).end();
             }    
 }));
+
 /* DELETE "/api/courses/:id" (204): Deletes a course and returns no content */
 router.delete("/courses/:id", authenticateUser, asyncHandler( async(req, res) => {
     let course;
@@ -115,7 +112,6 @@ router.delete("/courses/:id", authenticateUser, asyncHandler( async(req, res) =>
         res.status(204).end();
     } catch(error){ //In the unexpected event of an error?
         res.status(400).end();
-        //throw error?
     }
 }));
 

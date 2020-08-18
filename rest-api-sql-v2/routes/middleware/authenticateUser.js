@@ -1,19 +1,22 @@
 "use strict";
-
-const express = require('express');
-// const Sequelize = require("sequelize");
-const { validationResult } = require('express-validator');
+const express = require("express");
+const router = express.Router();
+const { check, validationResult } = require('express-validator');
 const bcryptjs = require("bcryptjs");
 const auth = require("basic-auth");
-// const User = require("../db/models/index");
+const User = require("../../db/models").User;
 
-const authenticateUser = (req, res, next) => {
+
+const authenticateUser = async(req, res, next) => {
     let message = null;
-
+    
 // Parse the user's credentials from the Authorization header.
     const credentials = auth(req);
   
     if (credentials) {
+    //For credentials to find username from db
+    const users = await User.findAll();
+    
     // Retrieve the username from db
     // (i.e. the user's "key" from the Authorization header).
       const user = users.find(u => u.username === credentials.name);
