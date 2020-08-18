@@ -84,26 +84,9 @@ router.post("/courses",[
                 //Study Reference: https://www.geeksforgeeks.org/express-js-res-location-function/#:~:text=The%20res.,if%20you%20want%20to%20write.
                 res.location(`/courses/${course.id}`);
                 res.status(201).end();
-        }
-    // let course;
-    // try{
-    //     course = await Course.create(req.body); // async/await for course.id
-    //     //Study Reference: https://www.geeksforgeeks.org/express-js-res-location-function/#:~:text=The%20res.,if%20you%20want%20to%20write.
-    //     res.location(`/courses/${course.id}`);
-    //     res.status(201).end();
-    // } catch(error){
-    //     if(error.name === "SequelizeValidationError"){
-    //         course = await Course.create(req.body); //Keeps input data preserved
-    //             //details each SequelizeValidationError:
-    //             const errors = error.errors.map(err => err.message);
-    //             console.error("Validation Error(s): ", errors);
-    //         res.status(400).end();
-    //     } else {
-    //         throw error; //async to catch
-    //     }
-    // }
-    
+        }    
 }));
+
 /* PUT "/api/courses/:id" (204): Updates a course and returns no content */
 router.put("/courses/:id",[
     check("title")
@@ -112,9 +95,6 @@ router.put("/courses/:id",[
     check("description")
       .exists({ checkNull: true, checkFalsy: true })
       .withMessage('Course requires "description"'),
-    check("estimatedTime")
-      .exists({ checkNull: true, checkFalsy: true })
-      .withMessage('"Rime" estimate needed for scheduling purposes'),
     ], authenticateUser, asyncHandler( async(req, res) => {
 
         if (!errors.isEmpty()) {
