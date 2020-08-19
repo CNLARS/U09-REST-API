@@ -19,7 +19,19 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 //Authentication to the db:
-sequelize.authenticate();
+(async () => {
+  try{
+    await sequelize.authenticate();
+    console.log("db status: Successful Connection!");
+  } catch (error){
+    if(error.name === "SequelizeValidationError"){
+      const errors = error.errors.map(err => err.message);
+      console.error("Validation errors: ", errors);
+    } else {
+      throw error;
+    }
+  }
+})();
 
 // setup a friendly greeting for the root route
 app.get('/', (req, res) => {
@@ -48,7 +60,6 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500).json({
     message: err.message,
     error: {}
-    // error: process.env.NODE_ENV === 'production' ? {} : err,
   });
 });
 

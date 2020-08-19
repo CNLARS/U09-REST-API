@@ -5,6 +5,8 @@ const router = express.Router();
 const { Course, User } = require("../db/models");
 const authenticateUser = require('./middleware/authenticateUser');
 const { check, validationResult } = require("express-validator");
+const bcryptjs = require("bcryptjs");
+const auth = require("basic-auth");
 
 //Async handler for each route to run try/catch
 function asyncHandler(cb){
@@ -23,13 +25,12 @@ function asyncHandler(cb){
 Returns list of courses (including the user by association) */
     //Study Reference: https://gist.github.com/zcaceres/83b554ee08726a734088d90d455bc566
 router.get("/courses", asyncHandler( async(req, res) => {
-    const courses = await Course.findAll({
-       include: [{
-           model: User,
-       }]
-    });
+    console.log("Testing321"); //Testing123
+    const courses = await Course.findAll();
     console.log(courses); //Testing123 
+    console.log("123");
         if(courses){
+            console.log("Testing321");
             res.json({courses});
             res.status(200).end();
         } else {
@@ -40,11 +41,7 @@ router.get("/courses", asyncHandler( async(req, res) => {
 /* GET "/api/courses/:id", (200): 
 Returns course (including the user that owns the course) for the provided course ID */
 router.get("/courses/:id", asyncHandler( async(req, res) => {
-    const course = await Course.findByPk(req.params.id, {
-        include: [{
-            model: User,
-        }]
-    });
+    const course = await Course.findByPk(req.params.id);
         if(course){
             res.json({course});
             res.status(200).end();

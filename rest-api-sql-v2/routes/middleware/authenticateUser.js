@@ -6,22 +6,39 @@ const bcryptjs = require("bcryptjs");
 const auth = require("basic-auth");
 const User = require("../../db/models").User;
 
+//Async handler to run try/catch on Middleware:
+function asyncHandler(cb){
+  return async(req, res, next) => {
+      try {
+          await cb(req, res, next)
+  } catch (error){
+          next(error);
+      }
+  }
+}
 
-const authenticateUser = async(req, res, next) => {
+const authenticateUser = asyncHandler( async(req, res, next) => {
     let message = null;
     
 // Parse the user's credentials from the Authorization header.
     const credentials = auth(req);
   
     if (credentials) {
-    //For credentials to find username from db
-    const users = await User.findAll();
-    
+      console.log("Testing");
+    //For credentials to find User from db from name entered matches emailAddress of User
+    const user = await User.findOne({
+      where: {
+        emailAddress: credentials.name
+      }
+    });
+      console.log("Testing. Testing.");
     // Retrieve the username from db
     // (i.e. the user's "key" from the Authorization header).
-      const user = users.find(u => u.username === credentials.name);
-  
+      // const user = users.find(u => u.emailAddress === credentials.name);
+      console.log("Testing. Testing. Testing");
+
       if (user) {
+        console.log("Testing123");
         // Using bcryptjs compare the user's password
         // (from the Authorization header) to the user's password
             const authenticated = bcryptjs
@@ -48,9 +65,9 @@ const authenticateUser = async(req, res, next) => {
       console.warn(message);
       res.status(401).json({ message });
     } else {
-    // In the event of "Successful Authentication":
+    //"Successful Authentication":
         next();
         }
-  };
+});
 
 module.exports = authenticateUser;

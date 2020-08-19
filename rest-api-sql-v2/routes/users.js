@@ -4,11 +4,9 @@ const express = require('express');
 const authenticateUser = require('./middleware/authenticateUser');
 const { check, validationResult } = require("express-validator");
 const bcryptjs = require("bcryptjs");
+const auth = require("basic-auth");
 const router = express.Router();
 const User = require("../db/models").User;
-
-const users = []; //Array to contain collection of user data
-
 
 //Async handler for each route to run try/catch
     function asyncHandler(cb){
@@ -27,7 +25,7 @@ const users = []; //Array to contain collection of user data
 router.get("/users", authenticateUser, asyncHandler( async(req, res) => {
     const user = await User.findByPk(req.currentUser.id); //req.currentUser;
         if(user){
-            res.status(200).json(user);
+            res.status(200).json({user});
             } else {
                 res.status(400).end();
             }
@@ -53,7 +51,7 @@ router.post("/users",[
   ], asyncHandler( async(req, res) => {
 
     const errors = validationResult(req);
-        const user = await User.create(req.body);
+        const user = await User.create(req.body); //model adds to db > previous array
 
         if (!errors.isEmpty()) {
             const errorMessages = errors.array().map(error => error.msg);
@@ -61,7 +59,6 @@ router.post("/users",[
             } else {
                 // Hash password and add new user:
                     user.password = bcryptjs.hashSync(user.password);
-                    users.push(user);
                     res.status(201).location("/").end(); //updates location and status code
         }
 }));
