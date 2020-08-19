@@ -26,7 +26,6 @@ router.get("/courses", asyncHandler( async(req, res) => {
     const courses = await Course.findAll({
        include: [{
            model: User,
-           as: "endUser"
        }]
     });
     console.log(courses); //Testing123 
@@ -44,7 +43,6 @@ router.get("/courses/:id", asyncHandler( async(req, res) => {
     const course = await Course.findByPk(req.params.id, {
         include: [{
             model: User,
-            as: "endUser"
         }]
     });
         if(course){
@@ -70,13 +68,12 @@ router.post("/courses",[
     ], 
     authenticateUser, asyncHandler( async(req, res) => {
         const errors = validationResult(req);
-        const course = req.body;
+        const course = await Course.create(req.body); // async/await for course.id
 
         if (!errors.isEmpty()) {
             const errorMessages = errors.array().map(error => error.msg);
             return res.status(404).json({errors: errorMessages});
             } else {
-                course = await Course.create(req.body); // async/await for course.id
                 //Study Reference: https://www.geeksforgeeks.org/express-js-res-location-function/#:~:text=The%20res.,if%20you%20want%20to%20write.
                 res.location(`/courses/${course.id}`);
                 res.status(201).end();

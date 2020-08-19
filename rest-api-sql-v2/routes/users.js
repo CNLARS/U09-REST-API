@@ -24,8 +24,8 @@ const users = []; //Array to contain collection of user data
 /* USER ROUTES */
 
 //GET "/api/users", (200): Returns the currently authenticated user
-router.get("/users", authenticateUser, asyncHandler( (req, res) => {
-    const user = User.findByPk(req.currentUser.id); //req.currentUser;
+router.get("/users", authenticateUser, asyncHandler( async(req, res) => {
+    const user = await User.findByPk(req.currentUser.id); //req.currentUser;
         if(user){
             res.status(200).json(user);
             } else {

@@ -3,7 +3,7 @@
 // load modules
 const express = require('express');
 const morgan = require('morgan');
-// const { sequelize } = require("./db/models/index");
+const { sequelize } = require("./db/models/index");
 const courses = require('./routes/courses');
 const users = require('./routes/users');
 
@@ -17,6 +17,9 @@ const app = express();
 app.use(express.json());
 // setup morgan which gives us http request logging
 app.use(morgan('dev'));
+
+//Authentication to the db:
+sequelize.authenticate();
 
 // setup a friendly greeting for the root route
 app.get('/', (req, res) => {

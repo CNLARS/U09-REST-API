@@ -10,14 +10,12 @@ module.exports = (sequelize) => {
             primaryKey: true,
             autoIncrement: true,
         },
+
     // title (String)
-        title: {
-            type: Sequelize.STRING,
-        },
+        title: Sequelize.STRING,
     // description (Text)
-        description: {
-            type: Sequelize.TEXT,
-        },
+        description: Sequelize.TEXT,
+
     // estimatedTime (String, nullable)
         estimatedTime: {
             type: Sequelize.STRING,
@@ -35,10 +33,11 @@ module.exports = (sequelize) => {
         /*Define a belongsTo association between Course and User models
          (i.e. a "Course" belongs to a single "User").*/
          Course.belongsTo(models.User, {
-            foreignKey: "userId",
-              as: "endUser",
+            foreignKey: { 
+                fieldName: "userId",
+                allowNull: false,
+            }
          });
     };
-
     return Course;
 }

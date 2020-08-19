@@ -10,22 +10,17 @@ module.exports = (sequelize) => {
             primaryKey: true,
             autoIncrement: true,
         },
+        //Refactored to feature Column declaration shorthand syntax:
+        
     // firstName (String)
-        firstName: {
-            type: Sequelize.STRING,
-        },
+        firstName: Sequelize.STRING,
     // lastName (String)
-        lastName: {
-            type: Sequelize.STRING,
-        },
+        lastName: Sequelize.STRING,
     // emailAddress (String)
-        emailAddress: {
-            type: Sequelize.STRING,
-        },
+        emailAddress: Sequelize.STRING,
     // password (String)
-        password: {
-            type: Sequelize.STRING,
-        },
+        password: Sequelize.STRING,
+
     }, { sequelize } );
 
     User.associate = (models) => {
@@ -33,8 +28,10 @@ module.exports = (sequelize) => {
          (i.e. a "User" has many "Courses").*/
 
          User.hasMany(models.Course, {
-            foreignKey: "userId",
-              as: "endUser",
+            foreignKey: { 
+                fieldName: "userId",
+                allowNull: false,
+            }
          });
     }
 
