@@ -3,6 +3,7 @@
 // load modules
 const express = require('express');
 const morgan = require('morgan');
+const cookieParser = require('cookie-parser')
 const { sequelize } = require("./db/models/index");
 const courses = require('./routes/courses');
 const users = require('./routes/users');
@@ -17,6 +18,8 @@ const app = express();
 app.use(express.json());
 // setup morgan which gives us http request logging
 app.use(morgan('dev'));
+//cookie parser: study source https://expressjs.com/en/guide/writing-middleware.html
+app.use(cookieParser());
 
 //Authentication to the db:
 (async () => {

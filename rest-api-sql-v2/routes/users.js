@@ -13,8 +13,8 @@ const User = require("../db/models").User;
         return async(req, res, next) => {
             try {
                 await cb(req, res, next)
-        } catch (error){
-                next(error);
+        } catch (err){
+                next(err);
             }
         }
     }
@@ -25,7 +25,7 @@ const User = require("../db/models").User;
 router.get("/users", authenticateUser, asyncHandler( async(req, res) => {
     const user = await User.findByPk(req.currentUser.id); //req.currentUser;
         if(user){
-            res.status(200).json({user});
+            res.status(200).json(user);
             } else {
                 res.status(400).end();
             }
@@ -42,7 +42,6 @@ router.post("/users",[
       .withMessage('Please provide a "last name"'),
     check("emailAddress")
       .exists({ checkNull: true, checkFalsy: true })
-      .withMessage("Please provide a valid email")
       .isEmail()
       .withMessage("Please provide a valid email address"),
     check("password")
@@ -51,14 +50,16 @@ router.post("/users",[
   ], asyncHandler( async(req, res) => {
 
     const errors = validationResult(req);
-        const user = await User.create(req.body); //model adds to db > previous array
+    const user = req.body;
 
         if (!errors.isEmpty()) {
             const errorMessages = errors.array().map(error => error.msg);
             return res.status(400).json({errors: errorMessages});
             } else {
                 // Hash password and add new user:
+                    await User.create(user);
                     user.password = bcryptjs.hashSync(user.password);
+                        console.log(user); //Testing123
                     res.status(201).location("/").end(); //updates location and status code
         }
 }));

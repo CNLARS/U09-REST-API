@@ -27,18 +27,13 @@ const authenticateUser = asyncHandler( async(req, res, next) => {
       console.log("Testing");
     //For credentials to find User from db from name entered matches emailAddress of User
     const user = await User.findOne({
+      // const user = users.find(u => u.emailAddress === credentials.name);
       where: {
         emailAddress: credentials.name
       }
     });
-      console.log("Testing. Testing.");
-    // Retrieve the username from db
-    // (i.e. the user's "key" from the Authorization header).
-      // const user = users.find(u => u.emailAddress === credentials.name);
-      console.log("Testing. Testing. Testing");
-
+    
       if (user) {
-        console.log("Testing123");
         // Using bcryptjs compare the user's password
         // (from the Authorization header) to the user's password
             const authenticated = bcryptjs

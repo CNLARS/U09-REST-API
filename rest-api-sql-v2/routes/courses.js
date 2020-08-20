@@ -13,8 +13,8 @@ function asyncHandler(cb){
     return async(req, res, next) => {
         try {
             await cb(req, res, next)
-    } catch (error){
-            next(error);
+    } catch (err){
+            next(err);
         }
     }
 }
@@ -27,11 +27,10 @@ Returns list of courses (including the user by association) */
 router.get("/courses", asyncHandler( async(req, res) => {
     console.log("Testing321"); //Testing123
     const courses = await Course.findAll();
-    console.log(courses); //Testing123 
-    console.log("123");
+    // console.log(courses); //Testing123 
         if(courses){
-            console.log("Testing321");
-            res.json({courses});
+            console.log("Testing123");
+            res.json(courses);
             res.status(200).end();
         } else {
             res.status(404).end();
@@ -59,18 +58,17 @@ router.post("/courses",[
     check("description")
       .exists({ checkNull: true, checkFalsy: true })
       .withMessage('Please add a "description" for the course'),
-    check("estimatedTime")
-      .exists({ checkNull: true, checkFalsy: true })
-      .withMessage('Please add an approx. "time" estimate for scheduling the course'),
     ], 
     authenticateUser, asyncHandler( async(req, res) => {
         const errors = validationResult(req);
-        const course = await Course.create(req.body); // async/await for course.id
+        const course = req.body;
 
         if (!errors.isEmpty()) {
             const errorMessages = errors.array().map(error => error.msg);
             return res.status(404).json({errors: errorMessages});
             } else {
+                await Course.create(course); // async/await for course.id
+                console.log(course);
                 //Study Reference: https://www.geeksforgeeks.org/express-js-res-location-function/#:~:text=The%20res.,if%20you%20want%20to%20write.
                 res.location(`/courses/${course.id}`);
                 res.status(201).end();
@@ -103,6 +101,7 @@ router.delete("/courses/:id", authenticateUser, asyncHandler( async(req, res) =>
     try{
         course = await Course.findByPk(req.params.id);
         course.destroy();
+            // console.log("Returning to Universe");
         res.status(204).end();
     } catch(error){ //In the unexpected event of an error?
         res.status(400).end();
