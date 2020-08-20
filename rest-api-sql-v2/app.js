@@ -18,7 +18,9 @@ const app = express();
 app.use(express.json());
 // setup morgan which gives us http request logging
 app.use(morgan('dev'));
-//cookie parser: study source https://expressjs.com/en/guide/writing-middleware.html
+
+//cookie parser: 
+//+Study Reference: https://expressjs.com/en/guide/writing-middleware.html
 app.use(cookieParser());
 
 //Authentication to the db:

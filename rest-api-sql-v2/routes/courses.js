@@ -29,7 +29,7 @@ router.get("/courses", asyncHandler( async(req, res) => {
     const courses = await Course.findAll();
     // console.log(courses); //Testing123 
         if(courses){
-            console.log("Testing123");
+                console.log("Testing123"); //Testing123
             res.json(courses);
             res.status(200).end();
         } else {
@@ -42,7 +42,7 @@ Returns course (including the user that owns the course) for the provided course
 router.get("/courses/:id", asyncHandler( async(req, res) => {
     const course = await Course.findByPk(req.params.id);
         if(course){
-            res.json({course});
+            res.json(course);
             res.status(200).end();
         } else {
             res.status(404).end();
@@ -68,8 +68,8 @@ router.post("/courses",[
             return res.status(404).json({errors: errorMessages});
             } else {
                 await Course.create(course); // async/await for course.id
-                console.log(course);
-                //Study Reference: https://www.geeksforgeeks.org/express-js-res-location-function/#:~:text=The%20res.,if%20you%20want%20to%20write.
+                    console.log(course); //Testing123
+//Study Reference: https://www.geeksforgeeks.org/express-js-res-location-function/#:~:text=The%20res.,if%20you%20want%20to%20write.
                 res.location(`/courses/${course.id}`);
                 res.status(201).end();
         }    
@@ -101,7 +101,7 @@ router.delete("/courses/:id", authenticateUser, asyncHandler( async(req, res) =>
     try{
         course = await Course.findByPk(req.params.id);
         course.destroy();
-            // console.log("Returning to Universe");
+            // console.log("Course Deleted");
         res.status(204).end();
     } catch(error){ //In the unexpected event of an error?
         res.status(400).end();

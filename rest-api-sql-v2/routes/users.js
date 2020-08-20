@@ -56,11 +56,14 @@ router.post("/users",[
             const errorMessages = errors.array().map(error => error.msg);
             return res.status(400).json({errors: errorMessages});
             } else {
-                // Hash password and add new user:
+                // Hash password and add new user to db:
                     await User.create(user);
                     user.password = bcryptjs.hashSync(user.password);
                         console.log(user); //Testing123
-                    res.status(201).location("/").end(); //updates location and status code
+                //updates location and status code:
+                    //Study Reference: 
+                    //https://www.geeksforgeeks.org/express-js-res-location-function/#:~:text=The%20res.,if%20you%20want%20to%20write.
+                    res.status(201).location("/").end();            
         }
 }));
 
