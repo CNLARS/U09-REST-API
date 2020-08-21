@@ -61,15 +61,15 @@ router.post("/courses",[
     ], 
     authenticateUser, asyncHandler( async(req, res) => {
         const errors = validationResult(req);
-        const course = req.body;
+        let course;
 
         if (!errors.isEmpty()) {
             const errorMessages = errors.array().map(error => error.msg);
-            return res.status(404).json({errors: errorMessages});
+            return res.status(400).json({errors: errorMessages});
             } else {
-                await Course.create(course); // async/await for course.id
                     console.log(course); //Testing123
 //Study Reference: https://www.geeksforgeeks.org/express-js-res-location-function/#:~:text=The%20res.,if%20you%20want%20to%20write.
+                course = await Course.create(req.body); // async/await for course.id
                 res.location(`/courses/${course.id}`);
                 res.status(201).end();
         }    
@@ -84,12 +84,14 @@ router.put("/courses/:id",[
       .exists({ checkNull: true, checkFalsy: true })
       .withMessage('Course requires "description"'),
     ], authenticateUser, asyncHandler( async(req, res) => {
+        const errors = validationResult(req); //Check for "title" and "description"
+        let course; //recalling closures and scope practice
 
         if (!errors.isEmpty()) {
             const errorMessages = errors.array().map(error => error.msg);
             return res.status(400).json({errors: errorMessages});
             } else {
-                let course = await Course.findByPk(req.params.id);
+                course = await Course.findByPk(req.params.id);
                 course.update(req.body);
                 res.status(204).end();
             }    
@@ -103,7 +105,7 @@ router.delete("/courses/:id", authenticateUser, asyncHandler( async(req, res) =>
         course.destroy();
             // console.log("Course Deleted");
         res.status(204).end();
-    } catch(error){ //In the unexpected event of an error?
+    } catch(error){ //In the unexpected event of an error? 
         res.status(400).end();
     }
 }));
