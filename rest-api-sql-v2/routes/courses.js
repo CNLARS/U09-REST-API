@@ -4,20 +4,12 @@ const express = require('express');
 const router = express.Router();
 const { Course, User } = require("../db/models");
 const authenticateUser = require('./middleware/authenticateUser');
+const asyncHandler = require("./middleware/asyncHandler");
 const { check, validationResult } = require("express-validator");
 const bcryptjs = require("bcryptjs");
 const auth = require("basic-auth");
 
-//Async handler for each route to run try/catch
-function asyncHandler(cb){
-    return async(req, res, next) => {
-        try {
-            await cb(req, res, next)
-    } catch (err){
-            next(err);
-        }
-    }
-}
+//Async handler for each route to run try/catch refactored/relocated to middleware
 
 /* COURSE ROUTES */
 
